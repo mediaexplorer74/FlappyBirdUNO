@@ -20,7 +20,7 @@ namespace FlappyBird.UWP
 #if DEBUG
 			if (System.Diagnostics.Debugger.IsAttached)
 			{
-				DebugSettings.EnableFrameRateCounter = true;
+				//DebugSettings.EnableFrameRateCounter = true;
 			}
 #endif
 

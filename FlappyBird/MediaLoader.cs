@@ -43,10 +43,13 @@ namespace FlappyBird.GameEngine
 		{
 			return Task.Run(() =>
 			{
-				using (var stream = LoadStream(path))
-				{
-					return SKImage.FromEncodedData(stream);
-				}
+                //using (Stream stream = LoadStream(path))
+                using (Stream stream = LoadStream(path))
+                using (SKData skdata = SKData.Create(stream))
+                {
+                    //return SKImage.FromEncodedData(stream);
+                    return SKImage.FromEncodedData(skdata);
+                }
 			});
 		}
 

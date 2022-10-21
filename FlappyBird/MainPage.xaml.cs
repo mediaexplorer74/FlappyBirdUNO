@@ -50,12 +50,17 @@ namespace FlappyBird
 
 			using var save = new SKAutoCanvasRestore(canvas, true);
 
-			scale = Math.Min(
-				(float)e.BackendRenderTarget.Width / baseSize.Width,
-				(float)e.BackendRenderTarget.Height / baseSize.Height);
+			//RnD
+			scale = Math.Min
+			(
+					(float)e.RenderTarget.Width /*e.BackendRenderTarget.Width*/ 
+					/ baseSize.Width,
+					(float)e.RenderTarget.Height/*e.BackendRenderTarget.Height*/ 
+					/ baseSize.Height
+			);
 
-			var screenRect = (SKRect)e.BackendRenderTarget.Rect;
-			var centeredRect = screenRect.AspectFit(baseSize);
+			SKRect screenRect = e.RenderTarget.Rect;/*e.BackendRenderTarget.Rect*/
+			SKRect centeredRect = screenRect.AspectFit(baseSize);
 
 			offset = centeredRect.Location;
 

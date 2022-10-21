@@ -145,8 +145,11 @@ namespace FlappyBird
 					var playerBounds = GetPlayerBounds(true);
 					foreach (var pipePos in pipes)
 					{
-						var (down, up) = GetPipeBounds(pipePos, true);
-						if (down.IntersectsWith(playerBounds) || up.IntersectsWith(playerBounds))
+                        //var (down, up) = GetPipeBounds(pipePos, true);
+                        var down = GetPipeBounds1(pipePos, true);
+                        var up = GetPipeBounds2(pipePos, true);
+
+                        if (down.IntersectsWith(playerBounds) || up.IntersectsWith(playerBounds))
 						{
 							GameOver = true;
 							break;
@@ -199,8 +202,11 @@ namespace FlappyBird
 			// pipes
 			foreach (var pipePos in pipes)
 			{
-				var (down, up) = GetPipeBounds(pipePos);
-				pipeDown.Draw(canvas, down.Left, down.Top);
+				//var (down, up) = GetPipeBounds(pipePos);
+                var down = GetPipeBounds1(pipePos);
+                var up = GetPipeBounds2(pipePos);
+
+                pipeDown.Draw(canvas, down.Left, down.Top);
 				pipeUp.Draw(canvas, up.Left, up.Top);
 			}
 		}
@@ -230,6 +236,8 @@ namespace FlappyBird
 			if (!whiteFlash.Finished)
 				canvas.DrawRect(SKRect.Create(Game.DisplaySize.Width, Game.DisplaySize.Height), whiteFlashPaint);
 		}
+
+		
 		public override void TouchDown(SKPointI point)
 		{
 			base.TouchDown(point);
@@ -240,7 +248,9 @@ namespace FlappyBird
 				scoresButton.TouchDown(point);
 			}
 		}
+		
 
+		
 		public override void TouchUp(SKPointI point)
 		{
 			base.TouchUp(point);
@@ -251,7 +261,9 @@ namespace FlappyBird
 				scoresButton.TouchUp(point);
 			}
 		}
+		
 
+		
 		public override void Tap(SKPointI point)
 		{
 			base.Tap(point);
@@ -294,11 +306,13 @@ namespace FlappyBird
 				angleAcceleration = BobbingBird.RotationAcceleration;
 			}
 		}
+		
 
 		public event EventHandler? PlayTapped;
 
 		public event EventHandler? ScoresTapped;
 
+        /*
 		protected (SKRect down, SKRect up) GetPipeBounds(SKPoint pipePos, bool collision = false)
 		{
 			var hole = PipeHole / 2f;
@@ -317,5 +331,45 @@ namespace FlappyBird
 
 			return (down, up);
 		}
-	}
+		*/
+
+        protected SKRect GetPipeBounds1(SKPoint pipePos, bool collision = false)
+        {
+            var hole = PipeHole / 2f;
+
+            var downPos = new SKPoint(pipePos.X, pipePos.Y - pipeDown.Size.Height - hole);
+            var upPos = new SKPoint(pipePos.X, pipePos.Y + hole);
+
+            var down = SKRect.Create(downPos, pipeDown.Size);
+            var up = SKRect.Create(upPos, pipeUp.Size);
+
+            if (collision)
+            {
+                down.Inflate(-2, 0);
+                up.Inflate(-2, 0);
+            }
+
+            return down;
+        }
+
+        protected SKRect GetPipeBounds2(SKPoint pipePos, bool collision = false)
+        {
+            var hole = PipeHole / 2f;
+
+            var downPos = new SKPoint(pipePos.X, pipePos.Y - pipeDown.Size.Height - hole);
+            var upPos = new SKPoint(pipePos.X, pipePos.Y + hole);
+
+            var down = SKRect.Create(downPos, pipeDown.Size);
+            var up = SKRect.Create(upPos, pipeUp.Size);
+
+            if (collision)
+            {
+                down.Inflate(-2, 0);
+                up.Inflate(-2, 0);
+            }
+
+            return up;
+        }
+
+    }
 }

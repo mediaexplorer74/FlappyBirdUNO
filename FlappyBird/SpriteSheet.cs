@@ -27,6 +27,7 @@ namespace FlappyBird.GameEngine
 				return;
 
 			Atlas = await mediaLoader.LoadTextureAsync(sheetPath);
+
 			if (Atlas == null || Atlas.Width == 0 || Atlas.Height == 0)
 				throw new ArgumentException($"Unable to load sprite sheet bitmap '{sheetPath}'.");
 

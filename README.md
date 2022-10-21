@@ -11,7 +11,7 @@ The "official" FlappyBird clone - made with SkiaSharp
 
 ## Status
 
-- NET Standard 2.0, not 1.4
+- NET Standard 1.4
 - WIn10/11 Desktop/Mobile semi-compatible (UWP; min.os. build 15063; touch control damaged)
 - Game process not complete
 

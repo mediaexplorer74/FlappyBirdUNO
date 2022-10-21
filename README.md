@@ -6,7 +6,7 @@ My fork of [FlappyBird](https://github.com/mattleibow/FlappyBird) repo. The main
 The "official" FlappyBird clone - made with SkiaSharp
 
 ## Screenshot(s)
-<img src="Images/shot1.png" Width="400" />
+<img src="Images/shot1.png" Width="800" />
 <img src="Images/shot2.png" Width="400" />
 
 ## Status
@@ -17,7 +17,7 @@ The "official" FlappyBird clone - made with SkiaSharp
 
 ## Architecture
 It is built with a few technologies:
- - UWP "multi-patforming"
+ - UWP "multi-platforming"
  - SkiaSharp 1.60 (All attempts to use 1.68/2.40 failed)
  - Xamarin.Forms 2.5
  - Uno Platform (remained for future deals)

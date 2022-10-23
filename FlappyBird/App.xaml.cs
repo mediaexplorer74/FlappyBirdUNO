@@ -7,6 +7,7 @@ namespace FlappyBird
 {
 	public partial class App : Application
 	{
+		public static float scale = 4.8f;
 		public App()
 		{
 			InitializeComponent();

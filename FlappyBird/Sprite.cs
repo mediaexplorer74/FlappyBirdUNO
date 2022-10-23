@@ -32,13 +32,14 @@ namespace FlappyBird.GameEngine
 			if (!Visible)
 				return;
 
-			using var cf = SKColorFilter.CreateBlendMode(SKColors.White.WithAlpha(opacity), SKBlendMode.DstIn);
+			//using 
+            var cf = SKColorFilter.CreateBlendMode(SKColors.White.WithAlpha(opacity), SKBlendMode.DstIn);
 			paint.ColorFilter = cf;
 			Draw(canvas, x, y, paint);
 			paint.ColorFilter = null;
 		}
 
-		public void Draw(SKCanvas canvas, float x, float y, SKPaint? paint = null)
+		public void Draw(SKCanvas canvas, float x, float y, SKPaint paint = null)
 		{
 			if (!Visible || SpriteSheet.Atlas == null)
 				return;

@@ -50,8 +50,15 @@ namespace FlappyBird
 		{
 			base.Resize(width, height);
 
-			readyPos = new SKPoint((width - getReady.Size.Width) / 2f, (height / 3f) - (getReady.Size.Height / 2f));
-			tutorialPos = new SKPoint((width - tutorial.Size.Width) / 2f, (height - tutorial.Size.Height) / 2f);
+			readyPos = new SKPoint
+                ((width - getReady.Size.Width) / 2f / 2f, 
+                ((height / 3f) - (getReady.Size.Height / 2f)) / 3f
+                );
+			tutorialPos = new SKPoint
+                (
+                (width - tutorial.Size.Width) / 2f / 2f, 
+                (height - tutorial.Size.Height) / 2f / 3f
+                );
 		}
 
 		public override void Update(TimeSpan dt)

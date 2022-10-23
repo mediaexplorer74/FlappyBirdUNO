@@ -12,6 +12,8 @@ namespace FlappyBird.GameEngine
 			Visible = !hidden;
 		}
 
+		protected float groundLevel; // !
+
 		public Game Game { get; private set; }
 
 		public SpriteSheet SpriteSheet { get; private set; }

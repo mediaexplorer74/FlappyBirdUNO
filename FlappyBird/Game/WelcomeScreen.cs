@@ -43,23 +43,47 @@ namespace FlappyBird
 
 			// title
 			var titleTop = third - title.Size.Height / 2f;
-			titlePos = new SKPoint((width - title.Size.Width) / 2f, titleTop);
+			titlePos = new SKPoint(
+            (
+                width - title.Size.Width) / 2f / App.scale, 
+                titleTop/ App.scale
+            ); // :)
 
 			// bird
-			playerPos = new SKPoint(width / 2f, groundLevel / 2f);
+			playerPos = 
+                new SKPoint(width / 2f/ App.scale, 
+                groundLevel / 2f/ App.scale);
 
 			// rate button
-			rateButton.Location = new SKPoint((width - rateButton.Size.Width) / 2f, groundLevel / 1.5f);
+			rateButton.Location = 
+            new SKPoint
+            (
+                (width - rateButton.Size.Width) / 2f/ App.scale, 
+                groundLevel / 1.5f/ App.scale + 100
+            );
 
 			// play + scores buttons
-			var buttonSpace = (width - playButton.Size.Width - scoresButton.Size.Width) / 3f;
+			var buttonSpace = (width - playButton.Size.Width - scoresButton.Size.Width) / 3f / App.scale;
+
 			var bb = FlappyBirdGame.ButtonShadowBorder.Bottom;
-			playButton.Location = new SKPoint(buttonSpace, groundLevel - playButton.Size.Height + bb);
+			playButton.Location = new SKPoint
+            (  
+                buttonSpace/ App.scale - 30,  // - 20 added by me ;)
+				(groundLevel - playButton.Size.Height + bb) / App.scale
+            );
+
 			buttonSpace += playButton.Size.Width + buttonSpace;
-			scoresButton.Location = new SKPoint(buttonSpace, groundLevel - scoresButton.Size.Height + bb);
+
+			scoresButton.Location = new SKPoint
+              (
+                buttonSpace/ App.scale + 50, // - 40 -- by me ;)
+                (groundLevel - scoresButton.Size.Height + bb) / App.scale 
+                );
 
 			// copyright
-			copyrightPos = new SKPoint((width - copyright.Size.Width) / 2f, groundLevel + GrassHeight);
+			copyrightPos = new SKPoint((width - copyright.Size.Width) / 2f / App.scale, 
+                (groundLevel + GrassHeight)/ App.scale + 200
+            );
 		}
 
 		protected override void DrawForeground(SKCanvas canvas)
@@ -107,17 +131,23 @@ namespace FlappyBird
 			base.Tap(point);
 
 			if (rateButton.HitTest(point))
+			{
 				RatingsTapped?.Invoke(this, EventArgs.Empty);
+			}
 			else if (playButton.HitTest(point))
+			{
 				PlayTapped?.Invoke(this, EventArgs.Empty);
+			}
 			else if (scoresButton.HitTest(point))
+			{
 				ScoresTapped?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
-		public event EventHandler? RatingsTapped;
+		public event EventHandler RatingsTapped;
 
-		public event EventHandler? PlayTapped;
+		public event EventHandler PlayTapped;
 
-		public event EventHandler? ScoresTapped;
+		public event EventHandler ScoresTapped;
 	}
 }

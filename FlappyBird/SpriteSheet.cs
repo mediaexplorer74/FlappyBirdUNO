@@ -17,7 +17,7 @@ namespace FlappyBird.GameEngine
 			this.dataPath = dataPath;
 		}
 
-		public SKImage? Atlas { get; private set; }
+		public SKImage Atlas { get; private set; }
 
 		public Dictionary<string, Sprite> Sprites { get; } = new Dictionary<string, Sprite>();
 

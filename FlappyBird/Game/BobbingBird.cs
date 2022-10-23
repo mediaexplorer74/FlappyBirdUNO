@@ -95,7 +95,8 @@ namespace FlappyBird
 
 		public void Draw(SKCanvas canvas, float angle, float x, float y)
 		{
-			using var save = new SKAutoCanvasRestore(canvas, true);
+			//using 
+            var save = new SKAutoCanvasRestore(canvas, true);
 
 			var bird = birdAnimation.Frames[birdAnimation.CurrentFrame];
 			var bounds = GetBounds(x, y);

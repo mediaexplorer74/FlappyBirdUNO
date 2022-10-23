@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
@@ -10,7 +11,6 @@ namespace FlappyBird
 		private readonly FlappyBirdGame game;
 		private readonly SKSizeI baseSize;
 
-		private float scale = 1;
 		private SKPoint offset = SKPoint.Empty;
 
 		public MainPage()
@@ -48,10 +48,11 @@ namespace FlappyBird
 			var canvas = e.Surface.Canvas;
 			canvas.Clear(SKColors.Black);
 
-			using var save = new SKAutoCanvasRestore(canvas, true);
+			//using 
+			SKAutoCanvasRestore save = new SKAutoCanvasRestore(canvas, true);
 
 			//RnD
-			scale = Math.Min
+			App.scale = Math.Min
 			(
 					(float)e.RenderTarget.Width /*e.BackendRenderTarget.Width*/ 
 					/ baseSize.Width,
@@ -65,7 +66,8 @@ namespace FlappyBird
 			offset = centeredRect.Location;
 
 			canvas.Translate(offset);
-			canvas.Scale(scale);
+			
+            canvas.Scale(App.scale);
 
 			canvas.ClipRect(SKRect.Create(baseSize));
 
@@ -75,12 +77,20 @@ namespace FlappyBird
 		private void OnTouch(object sender, SKTouchEventArgs e)
 		{
 			var pos = e.Location;
-			var x = (pos.X - offset.X) / scale;
-			var y = (pos.Y - offset.Y) / scale;
+
+			// RnD
+			var x = (pos.X - offset.X ) / App.scale; 
+			var y = (pos.Y - offset.Y ) / App.scale; 
 
 			if (e.ActionType == SKTouchAction.Pressed)
 			{
 				game.TouchDown(new SKPointI((int)x, (int)y));
+                Debug.WriteLine("Button pressed: "+ "x=" + x + ", y=" + y);
+				Debug.WriteLine("Scale factor: " + App.scale);
+				Debug.WriteLine("PosX: " + pos.X);
+				Debug.WriteLine("PosY: " + pos.Y);
+				Debug.WriteLine("OffsetX: " + offset.X);
+				Debug.WriteLine("OffsetY: " + offset.Y);
 			}
 			else if (e.ActionType == SKTouchAction.Released)
 			{

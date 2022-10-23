@@ -32,8 +32,8 @@ namespace FlappyBird
 		{
 			random = new Random();
 
-			var day = random.Next(10) > 3; // a random day / night
-			var bird = random.Next(3); // a random bird
+			bool day = random.Next(10) > 3; // a random day / night
+			int bird = random.Next(3); // a random bird
 
 			background = SpriteSheet.Sprites[day ? FlappyBirdSprites.bg_day : FlappyBirdSprites.bg_night];
 			animatedGround = SpriteSheet.Sprites[FlappyBirdSprites.land];
@@ -48,7 +48,7 @@ namespace FlappyBird
 		{
 			base.Update(dt);
 
-			var secs = (float)dt.TotalSeconds;
+			float secs = (float)dt.TotalSeconds;
 
 			bobbingBird.Update(dt);
 

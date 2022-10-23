@@ -5,312 +5,322 @@ using SkiaSharp;
 
 namespace FlappyBird
 {
-	public class GameScreen : ScrollingGroundScreen
-	{
-		private const int PipeGap = 96;
-		private const int PipeHole = 96;
-		private const int ShortestPipe = 96;
-		private const float PipeOffset = 288f;
+    public class GameScreen : ScrollingGroundScreen
+    {
+        private const int PipeGap = 96;
+        private const int PipeHole = 96;
+        private const int ShortestPipe = 96;
+        private const float PipeOffset = 288f;
 
-		private const float FlashDuration = 1f;
+        private const float FlashDuration = 1f;
 
-		private readonly ButtonSprite playButton;
-		private readonly ButtonSprite scoresButton;
+        private readonly ButtonSprite playButton;
+        private readonly ButtonSprite scoresButton;
 
-		private readonly Sprite pipeUp;
-		private readonly Sprite pipeDown;
-		private readonly SpriteNumber score;
+        private readonly Sprite pipeUp;
+        private readonly Sprite pipeDown;
+        private readonly SpriteNumber score;
 
-		private readonly List<SKPoint> pipes;
-		private readonly float pipeWidth;
+        private readonly List<SKPoint> pipes;
+        private readonly float pipeWidth;
 
-		private readonly TutorialOverlay tutorial;
-		private readonly GameOverOverlay gameOver;
+        private readonly TutorialOverlay tutorial;
+        private readonly GameOverOverlay gameOver;
 
-		private readonly Animator whiteFlash;
-		private readonly SKPaint whiteFlashPaint;
+        private readonly Animator whiteFlash;
+        private readonly SKPaint whiteFlashPaint;
 
-		public GameScreen(Game game, SpriteSheet spriteSheet)
-			: base(game, spriteSheet)
-		{
-			playButton = new ButtonSprite(SpriteSheet.Sprites[FlappyBirdSprites.button_play]);
-			scoresButton = new ButtonSprite(SpriteSheet.Sprites[FlappyBirdSprites.button_score]);
+        public GameScreen(Game game, SpriteSheet spriteSheet)
+            : base(game, spriteSheet)
+        {
+            playButton = new ButtonSprite(SpriteSheet.Sprites[FlappyBirdSprites.button_play]);
+            scoresButton = new ButtonSprite(SpriteSheet.Sprites[FlappyBirdSprites.button_score]);
 
-			pipeUp = SpriteSheet.Sprites[FlappyBirdSprites.pipe_up];
-			pipeDown = SpriteSheet.Sprites[FlappyBirdSprites.pipe_down];
-			score = new SpriteNumber(SpriteSheet.Sprites, FlappyBirdSprites.Formats.font);
+            pipeUp = SpriteSheet.Sprites[FlappyBirdSprites.pipe_up];
+            pipeDown = SpriteSheet.Sprites[FlappyBirdSprites.pipe_down];
+            score = new SpriteNumber(SpriteSheet.Sprites, FlappyBirdSprites.Formats.font);
 
-			pipes = new List<SKPoint>();
-			pipeWidth = Math.Max(pipeUp.Size.Width, pipeDown.Size.Width);
+            pipes = new List<SKPoint>();
+            pipeWidth = Math.Max(pipeUp.Size.Width, pipeDown.Size.Width);
 
-			tutorial = new TutorialOverlay(game, spriteSheet);
-			gameOver = new GameOverOverlay(game, spriteSheet);
+            tutorial = new TutorialOverlay(game, spriteSheet);
+            gameOver = new GameOverOverlay(game, spriteSheet);
 
-			whiteFlash = new Animator();
-			whiteFlashPaint = new SKPaint();
-			whiteFlashPaint.Color = SKColors.Transparent;
-		}
+            whiteFlash = new Animator();
+            whiteFlashPaint = new SKPaint();
+            whiteFlashPaint.Color = SKColors.Transparent;
+        }
 
-		public bool GameOver { get; private set; }
+        public bool GameOver { get; private set; }
 
-		private bool ShowButtons =>
-			GameOver && whiteFlash.Finished && gameOver.Finished;
+        private bool ShowButtons =>
+            GameOver && whiteFlash.Finished && gameOver.Finished;
 
-		public override void Start()
-		{
-			base.Start();
+        public override void Start()
+        {
+            base.Start();
 
-			tutorial.Show();
-		}
+            tutorial.Show();
+        }
 
-		public override void Resize(int width, int height)
-		{
-			base.Resize(width, height);
+        public override void Resize(int width, int height)
+        {
+            base.Resize(width, height);
 
-			playerPos = new SKPoint(width / 3f, height / 2.5f);
+            playerPos = new SKPoint(width / 3f, height / 2.5f);
 
-			tutorial.Resize(width, height);
-			gameOver.Resize(width, height);
+            tutorial.Resize(width, height);
+            gameOver.Resize(width, height);
 
-			// play + scores buttons
-			var buttonSpace = (width - playButton.Size.Width - scoresButton.Size.Width) / 3f;
-			var bb = FlappyBirdGame.ButtonShadowBorder.Bottom;
-			playButton.Location = new SKPoint(buttonSpace, groundLevel - playButton.Size.Height + bb);
-			buttonSpace += playButton.Size.Width + buttonSpace;
-			scoresButton.Location = new SKPoint(buttonSpace, groundLevel - scoresButton.Size.Height + bb);
-		}
+            // play + scores buttons
+            var buttonSpace = (width - playButton.Size.Width - scoresButton.Size.Width) / 3f;
+            var bb = FlappyBirdGame.ButtonShadowBorder.Bottom;
+            playButton.Location = new SKPoint(buttonSpace, groundLevel - playButton.Size.Height + bb);
+            buttonSpace += playButton.Size.Width + buttonSpace;
+            scoresButton.Location = new SKPoint(buttonSpace, groundLevel - scoresButton.Size.Height + bb);
+        }
 
-		public override void Update(TimeSpan dt)
-		{
-			base.Update(dt);
+        public override void Update(TimeSpan dt)
+        {
+            base.Update(dt);
 
-			// update child objects
-			tutorial.Update(dt);
-			gameOver.Update(dt);
-			whiteFlash.Update(dt);
+            // update child objects
+            tutorial.Update(dt);
+            gameOver.Update(dt);
+            whiteFlash.Update(dt);
 
-			// update this screen
-			var secs = (float)dt.TotalSeconds;
-			var screenRight = Game.DisplaySize.Width;
+            // update this screen
+            var secs = (float)dt.TotalSeconds;
+            var screenRight = Game.DisplaySize.Width;
 
-			if (!GameOver)
-			{
-				// only start with the pipes once the bird is flapping
-				if (interactiveMode)
-				{
-					// move the pipes
-					for (int i = 0; i < pipes.Count; i++)
-					{
-						var pipe = pipes[i];
-						pipe.X -= FlappyBirdGame.ForwardSpeed * secs;
+            if (!GameOver)
+            {
+                // only start with the pipes once the bird is flapping
+                if (interactiveMode)
+                {
+                    // move the pipes
+                    for (int i = 0; i < pipes.Count; i++)
+                    {
+                        var pipe = pipes[i];
+                        pipe.X -= FlappyBirdGame.ForwardSpeed * secs;
 
-						if (pipe.X + pipeWidth < 0)
-						{
-							// remove offscreen pipes
-							pipes.RemoveAt(i);
-							i--;
-						}
-						else
-						{
-							// update position
-							pipes[i] = pipe;
-						}
-					}
+                        if (pipe.X + pipeWidth < 0)
+                        {
+                            // remove offscreen pipes
+                            pipes.RemoveAt(i);
+                            i--;
+                        }
+                        else
+                        {
+                            // update position
+                            pipes[i] = pipe;
+                        }
+                    }
 
-					// add new pipes
-					var hole = random.Next(ShortestPipe, (int)groundLevel - ShortestPipe);
-					if (pipes.Count == 0)
-					{
-						pipes.Add(new SKPoint(screenRight + PipeOffset, hole));
-					}
-					else
-					{
-						var last = pipes[pipes.Count - 1];
-						if (last.X + pipeWidth < screenRight)
-						{
-							pipes.Add(new SKPoint(screenRight + PipeGap, hole));
-						}
-					}
-				}
+                    // add new pipes
+                    var hole = random.Next(ShortestPipe, (int)groundLevel - ShortestPipe);
+                    if (pipes.Count == 0)
+                    {
+                        pipes.Add(new SKPoint(screenRight + PipeOffset, hole));
+                    }
+                    else
+                    {
+                        var last = pipes[pipes.Count - 1];
+                        if (last.X + pipeWidth < screenRight)
+                        {
+                            pipes.Add(new SKPoint(screenRight + PipeGap, hole));
+                        }
+                    }
+                }
 
-				// crashed into the ground
-				var groundPos = groundLevel - birdGroundOffset;
-				if (playerPos.Y > groundPos)
-				{
+                // crashed into the ground
+                var groundPos = groundLevel - birdGroundOffset;
+                if (playerPos.Y > groundPos)
+                {
+					playerPos.Y = groundPos + 20; // = ground contact))))
 					GameOver = true;
-				}
-				else
-				{
-					// check pipe collisions
-					var playerBounds = GetPlayerBounds(true);
-					foreach (var pipePos in pipes)
-					{
+					
+                    // Cheat mode 2 )) 
+                    //playerPos.Y = groundPos;
+                }
+                else
+                {
+                    // check pipe collisions
+                    SKRect playerBounds = GetPlayerBounds(true);
+
+                    foreach (SKPoint pipePos in pipes)
+                    {
                         //var (down, up) = GetPipeBounds(pipePos, true);
-                        var down = GetPipeBounds1(pipePos, true);
-                        var up = GetPipeBounds2(pipePos, true);
+                        SKRect down = GetPipeBounds1(pipePos, true);
+                        SKRect up = GetPipeBounds2(pipePos, true);
 
                         if (down.IntersectsWith(playerBounds) || up.IntersectsWith(playerBounds))
-						{
-							GameOver = true;
-							break;
-						}
-					}
-				}
+                        {
+                           
+                            //GameOver = true;
+                            //break;
+                            // Cheat mode 1
+                            playerPos.Y = pipePos.Y;
+                        }
+                    }
+                }
 
-				// start the white flash to start the game over animations
-				if (GameOver)
-				{
-					whiteFlash.Start(1f, 0f, Animator.Interpolations.Decelerate, FlashDuration);
-				}
-			}
+                // start the white flash to start the game over animations
+                if (GameOver)
+                {
+                    whiteFlash.Start(1f, 0f, Animator.Interpolations.Decelerate, FlashDuration);
+                }
+            }
 
-			if (GameOver)
-			{
-				// stop falling if on the ground
-				var groundPos = groundLevel - birdGroundOffset;
-				if (playerPos.Y > groundPos)
-				{
-					speed = 0;
-					acceleration = 0;
-					playerPos.Y = groundPos;
-				}
+            if (GameOver)
+            {
+                // stop falling if on the ground
+                var groundPos = groundLevel - birdGroundOffset;
+                if (playerPos.Y > groundPos)
+                {
+                    speed = 0;
+                    acceleration = 0;
+                    playerPos.Y = groundPos;
+                }
 
-				// stop game
-				scrolling = false;
-				interactiveMode = false;
+                // stop game
+                scrolling = false;
+                interactiveMode = false;
 
-				if (!whiteFlash.Finished)
-				{
-					// we are flashing
-					whiteFlashPaint.Color = SKColors.White.WithAlpha((byte)(whiteFlash.Value * 255));
-				}
-				else if (!gameOver.Visible)
-				{
-					// show game over now
-					gameOver.Show();
+                if (!whiteFlash.Finished)
+                {
+                    // we are flashing
+                    whiteFlashPaint.Color = SKColors.White.WithAlpha((byte)(whiteFlash.Value * 255));
+                }
+                else if (!gameOver.Visible)
+                {
+                    // show game over now
+                    gameOver.Show();
 
-					// and clean up game ites
-					score.Visible = false;
-				}
-			}
-		}
+                    // and clean up game ites
+                    score.Visible = false;
+                }
+            }
+        }
 
-		protected override void DrawBackground(SKCanvas canvas)
-		{
-			base.DrawBackground(canvas);
+        protected override void DrawBackground(SKCanvas canvas)
+        {
+            base.DrawBackground(canvas);
 
-			// pipes
-			foreach (var pipePos in pipes)
-			{
-				//var (down, up) = GetPipeBounds(pipePos);
+            // pipes
+            foreach (var pipePos in pipes)
+            {
+                //var (down, up) = GetPipeBounds(pipePos);
                 var down = GetPipeBounds1(pipePos);
                 var up = GetPipeBounds2(pipePos);
 
                 pipeDown.Draw(canvas, down.Left, down.Top);
-				pipeUp.Draw(canvas, up.Left, up.Top);
-			}
-		}
+                pipeUp.Draw(canvas, up.Left, up.Top);
+            }
+        }
 
-		protected override void DrawForeground(SKCanvas canvas)
-		{
-			base.DrawForeground(canvas);
+        protected override void DrawForeground(SKCanvas canvas)
+        {
+            base.DrawForeground(canvas);
 
-			score.Draw(canvas, (Game.DisplaySize.Width - score.Width) / 2f, groundLevel / 6f);
+            score.Draw(canvas, (Game.DisplaySize.Width - score.Width) / 2f, groundLevel / 6f);
 
-			tutorial.Draw(canvas);
-			gameOver.Draw(canvas);
+            tutorial.Draw(canvas);
+            gameOver.Draw(canvas);
 
-			if (ShowButtons)
-			{
-				// play + scores buttons
-				playButton.Draw(canvas);
-				scoresButton.Draw(canvas);
-			}
-		}
+            if (ShowButtons)
+            {
+                // play + scores buttons
+                playButton.Draw(canvas);
+                scoresButton.Draw(canvas);
+            }
+        }
 
-		public override void Draw(SKCanvas canvas)
-		{
-			base.Draw(canvas);
+        public override void Draw(SKCanvas canvas)
+        {
+            base.Draw(canvas);
 
-			// draw the flash over everything
-			if (!whiteFlash.Finished)
-				canvas.DrawRect(SKRect.Create(Game.DisplaySize.Width, Game.DisplaySize.Height), whiteFlashPaint);
-		}
+            // draw the flash over everything
+            if (!whiteFlash.Finished)
+            {
+                canvas.DrawRect(SKRect.Create(Game.DisplaySize.Width, Game.DisplaySize.Height), whiteFlashPaint);
+            }
+        }
 
-		
-		public override void TouchDown(SKPointI point)
-		{
-			base.TouchDown(point);
 
-			if (ShowButtons)
-			{
-				playButton.TouchDown(point);
-				scoresButton.TouchDown(point);
-			}
-		}
-		
+        public override void TouchDown(SKPointI point)
+        {
+            base.TouchDown(point);
 
-		
-		public override void TouchUp(SKPointI point)
-		{
-			base.TouchUp(point);
+            if (ShowButtons)
+            {
+                playButton.TouchDown(point);
+                scoresButton.TouchDown(point);
+            }
+        }
 
-			if (ShowButtons)
-			{
-				playButton.TouchUp(point);
-				scoresButton.TouchUp(point);
-			}
-		}
-		
 
-		
-		public override void Tap(SKPointI point)
-		{
-			base.Tap(point);
 
-			if (ShowButtons)
-			{
-				if (playButton.HitTest(point))
-					PlayTapped?.Invoke(this, EventArgs.Empty);
-				else if (scoresButton.HitTest(point))
-					ScoresTapped?.Invoke(this, EventArgs.Empty);
-			}
+        public override void TouchUp(SKPointI point)
+        {
+            base.TouchUp(point);
 
-			// if we aren't scrolling, then it is game over
-			if (!scrolling)
-				return;
+            if (ShowButtons)
+            {
+                playButton.TouchUp(point);
+                scoresButton.TouchUp(point);
+            }
+        }
 
-			// start the flapping if this is the first time tapping
-			if (!interactiveMode)
-			{
-				interactiveMode = true;
 
-				// take the current bob and add it to the position
-				// before turing off bobbing
-				playerPos.Y += bobbingBird.BobOffset;
-				bobbingBird.BobOffset = 0f;
 
-				tutorial.Hide();
-			}
+        public override void Tap(SKPointI point)
+        {
+            base.Tap(point);
 
-			// flap those wings!
-			bobbingBird.StartFlapping();
+            if (ShowButtons)
+            {
+                if (playButton.HitTest(point))
+                    PlayTapped?.Invoke(this, EventArgs.Empty);
+                else if (scoresButton.HitTest(point))
+                    ScoresTapped?.Invoke(this, EventArgs.Empty);
+            }
 
-			// apply flap force
-			if (playerPos.Y > 0)
-			{
-				// a flap cancels all downward momentum
-				speed = BobbingBird.FlapStrength;
-				acceleration = BobbingBird.Gravity;
-				angleChange = BobbingBird.InitialRotationAcceleration;
-				angleAcceleration = BobbingBird.RotationAcceleration;
-			}
-		}
-		
+            // if we aren't scrolling, then it is game over
+            if (!scrolling)
+                return;
 
-		public event EventHandler? PlayTapped;
+            // start the flapping if this is the first time tapping
+            if (!interactiveMode)
+            {
+                interactiveMode = true;
 
-		public event EventHandler? ScoresTapped;
+                // take the current bob and add it to the position
+                // before turing off bobbing
+                playerPos.Y += bobbingBird.BobOffset;
+                bobbingBird.BobOffset = 0f;
+
+                tutorial.Hide();
+            }
+
+            // flap those wings!
+            bobbingBird.StartFlapping();
+
+            // apply flap force
+            if (playerPos.Y > 0)
+            {
+                // a flap cancels all downward momentum
+                speed = BobbingBird.FlapStrength;
+                acceleration = BobbingBird.Gravity;
+                angleChange = BobbingBird.InitialRotationAcceleration;
+                angleAcceleration = BobbingBird.RotationAcceleration;
+            }
+        }
+
+
+        public event EventHandler PlayTapped;
+
+        public event EventHandler ScoresTapped;
 
         /*
 		protected (SKRect down, SKRect up) GetPipeBounds(SKPoint pipePos, bool collision = false)

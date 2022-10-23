@@ -11,8 +11,8 @@ namespace FlappyBird.GameEngine
 		// transition
 		private readonly SKPaint fadePaint;
 		private float fadeProgress;
-		private Screen? currentScreen;
-		private Screen? transitionScreen;
+		private Screen currentScreen;
+		private Screen transitionScreen;
 
 		private SKPaint fpsPaint;
 		private readonly FrameCounter counter;
@@ -31,9 +31,9 @@ namespace FlappyBird.GameEngine
 			};
 			counter = new FrameCounter();
 
-#if DEBUG
-			DrawFrameRate = true;
-#endif
+//#if DEBUG
+			DrawFrameRate = false;//true;
+//#endif
 		}
 
 		public SKSize DisplaySize { get; private set; }
@@ -42,7 +42,7 @@ namespace FlappyBird.GameEngine
 
 		public bool Transitioning => TransitionScreen != null;
 
-		public Screen? CurrentScreen
+		public Screen CurrentScreen
 		{
 			get => currentScreen;
 			set
@@ -52,7 +52,7 @@ namespace FlappyBird.GameEngine
 			}
 		}
 
-		public Screen? TransitionScreen
+		public Screen TransitionScreen
 		{
 			get => transitionScreen;
 			private set
